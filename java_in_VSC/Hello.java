@@ -5,6 +5,7 @@ public class Hello {
 
     public static void main(String[] args) {
         String x = "Hello !!!";
-        System.out.println(x);
+        String y = "test java 1";
+        System.out.println(x + "   " + y);
     }
 }
