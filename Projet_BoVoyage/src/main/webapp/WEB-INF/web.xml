@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+	<display-name>Projet_BoVoyage</display-name>
+
+	<!-- Déclaration du Listener afin que le conteneur web puisse charger le 
+		contexte Spring IoC -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Spécifier le chemin d'accès au fichier de configuration de Spring IoC -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/application-context.xml  /WEB-INF/security-context.xml</param-value>
+	</context-param>
+
+	<!-- Déclaration de la Servlet unique de Spring MVC (DispatcherServlet) -->
+	<servlet>
+		<servlet-name>ds</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- Spécifier le chemin d'accès au fichier de configuration de Spring 
+			MVC -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/mvc-context.xml</param-value>
+		</init-param>
+	</servlet>
+
+	<!-- Mapping de la Servlet unique -->
+	<servlet-mapping>
+		<servlet-name>ds</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<!-- Page d'accueil -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- Déclaration du filtre de sécurisation -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<!-- Mapping du filtre de sécurisation -->
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Paypal Config -->
+	<context-param>
+		<param-name>authtoken</param-name>
+		<param-value>dr5oN0AldAgoMY1Sfq6jFliOEc4ed9nYvA_TpyEBLn5wIgnfTOOWu5FLVI8</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>posturl</param-name>
+		<param-value>https://www.sandbox.paypal.com/cgi-bin/webscr</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>business</param-name>
+		<param-value>gbonnenf@orange.fr</param-value>
+	</context-param>
+	
+	<context-param>
+	<param-name>returnurl</param-name>
+	<param-value>http://localhost:8080/Projet_BoVoyage/paypal/success.html</param-value>
+	</context-param>
+
+
+</web-app>

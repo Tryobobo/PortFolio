@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+	<!-- Spécifier le chemin du fichier .properties -->
+	<context:property-placeholder location="classpath*:infoDs.properties" />
+
+	<!-- Déclaration du Bean DataSource -->
+	<bean id="dataSourceBean1"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<!-- Injection des propriétés de connexion via les modificateurs -->
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.mdp}" />
+
+	</bean>
+	<!-- ====================== -->
+	<!-- Partie 1: Autorisation -->
+	<!-- ====================== -->
+
+	<security:http>
+		<!-- Spécifier les URLs à sécuriser avec la balise intercept-url via l'attribut 
+			pattern -->
+		<!-- Donner les autorisations avec l'attribut access de la balise intercept-url -->
+		<security:intercept-url pattern="/start/admin/**"
+			access="ROLE_ADMIN" />
+
+		<security:intercept-url pattern="/start/custo/**"
+			access="ROLE_CUSTO" />
+
+		<security:intercept-url pattern="/start/couns/**"
+			access="ROLE_COUNS" />
+
+
+		<!-- Utilisation d'un formulaire personnalisé -->
+		<security:form-login login-page="/loginUrl"
+			login-processing-url="/connexion" authentication-failure-url="/failUrl" />
+
+		<!-- Afficher la page des accès refusés -->
+		<security:access-denied-handler
+			error-page="/deniedUrl" />
+		<!-- Déconnexion -->
+		<security:logout invalidate-session="true"
+			logout-success-url="/start/welcome" />
+	</security:http>
+
+	<!-- ========================== -->
+	<!-- Partie 2: Authentification -->
+	<!-- ========================== -->
+
+	<security:authentication-manager>
+		<security:authentication-provider>
+			<!-- Utilisation de la database pour la déclaration des utilisateurs -->
+			<security:jdbc-user-service
+				data-source-ref="dataSourceBean1"
+				users-by-username-query="SELECT mail, password, active FROM person WHERE mail=?"
+				authorities-by-username-query="SELECT p.mail, r.roleName FROM person p, role r WHERE p.mail=? AND p.id=r.p_id" />
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>
